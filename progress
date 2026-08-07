@@ -142,10 +142,9 @@ function main() {
     # run the users command
     $__command &&
       kill $__pid 2>/dev/null
-    printf "\r"
+    printf "\r\n"
     ;;
   esac
-  printf "\n"
 }
 
 main "$@"
