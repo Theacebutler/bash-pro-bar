@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+function print_help() {
+  cat <<EOF
+Take a command to run and show an animation while the command is runing.
+
+  Usage: progress [OPTIONS] [FLAGS]
+
+  Example:
+    progress bar 4 -c sleep 4 && echo done
+
+
+ OPTIONS:
+  help: Print this message and exit.
+
+
+  FLAGS:
+    -t --type: Type of animation, options: progress_bar, spinner.
+    -d, --duration: The duration of the animation, any number greater then 1, in seconds.
+    -c: Command to run.
+    -h, --help: Print this message and exit.
+
+
+
+ Made by theacebutler, Aug 2026
+
+
+EOF
+}
+
+function main() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    "help")
+      print_help
+      exit 0
+      ;;
+    *)
+      print_help
+      exit 1
+      ;;
+    esac
+    shift
+  done
+
+  case "$__type" in
+  "spinner")
+    unset "$__pid"
+    if [[ -z "$__command" ]]; then
+      exit 1
+    fi
+    spinner &
+    __pid="$!"
+    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
+    # run the users command
+    $__command &&
+      kill $__pid 2>/dev/null
+    printf "\r"
+  "bar")
+    unset "$__pid"
+    progress_bar "$__duration" &
+    __pid="$!"
+    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
+    # run the users command
+    $__command &&
+      kill $__pid 2>/dev/null
+    printf "\r"
+    ;;
+  "bar")
+    unset "$__pid"
+    progress_bar "$__duration" &
+    __pid="$!"
+    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
+    # run the users command
+    $__command &&
+      kill $__pid 2>/dev/null
+    printf "\r"
+    ;;
+  esac
+}
+main "$@"
