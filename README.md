@@ -32,6 +32,20 @@ Take a command to run and show an animation while the command is runing.
  Made by theacebutler, Aug 2026
 ```
 
+## Installation
+
+```bash
+# clone the repo
+git clone https://github.com/theacebutler/bash-pro-bar
+cd bash-pro-bar
+# make executable
+chmod +x progress
+# run
+./progress spinner -c sleep 5
+```
+
+## Bugs
+
 - see [BUGS.md](./BUGS.md)
 
 - pr's welcome
