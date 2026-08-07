@@ -118,6 +118,7 @@ function main() {
     fi
     spinner &
     __pid="$!"
+    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
     # run the users command
     $__command &&
       kill $__pid 2>/dev/null
@@ -126,6 +127,7 @@ function main() {
     unset "$__pid"
     progress_bar "$__duration" &
     __pid="$!"
+    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
     # run the users command
     $__command &&
       kill $__pid 2>/dev/null
