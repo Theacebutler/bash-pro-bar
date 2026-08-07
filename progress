@@ -29,6 +29,7 @@ EOF
 }
 
 __type=
+__duration=0
 # Symbols
 __spinner_symbols=(
   "-"
@@ -47,11 +48,50 @@ function spinner() {
   done
 }
 
+function print_bar() {
+  # print a progress symvbole * $1 amount of time, $1 is what is left out to fill
+  for _ in $(seq 0 "$1"); do
+    printf "|"
+  done
+}
+
+function print_space() {
+  # print a " " * $1 amount of time, $1 is what is left out to fill
+  for _ in $(seq 0 "$1"); do
+    printf " "
+  done
+}
+
+function progress_bar() {
+  local duration step pos
+  duration="$1"
+  step=$((100 / duration))
+  for pos in $(seq 0 $((duration))); do
+    printf "\r"
+    printf "[ %s%s ]" "$((pos * step))" "%"
+    printf "["
+    print_bar $((step * pos))
+    print_space $((step * $((duration - pos))))
+    printf "]"
+    if ((pos < duration)); then
+      sleep 1
+    fi
+  done
+  printf "\r\n"
+}
+
 function main() {
   while [ $# -gt 0 ]; do
     case "$1" in
+    "bar")
+      __type="bar"
+      ;;
     "spinner")
       __type="spinner"
+      ;;
+    "-d" | "--duration")
+      __duration="$2"
+      shift
       ;;
     "help")
       print_help
@@ -68,10 +108,10 @@ function main() {
     unset "$__pid"
     spinner &
     __pid="$!"
-    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
-    # run the users command
-    $__command &&
-      kill $__pid 2>/dev/null
+  "bar")
+    unset "$__pid"
+    progress_bar "$__duration" &
+    __pid="$!"
     printf "\r"
     ;;
   "bar")
