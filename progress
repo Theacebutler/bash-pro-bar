@@ -113,7 +113,7 @@ function main() {
     shift
   done
 
-  if [[ -z "$__duration" ]] || [[ -z "$__command" ]]; then
+  if [[ -z "$__command" ]]; then
     print_help
     exit 1
   fi
@@ -131,6 +131,10 @@ function main() {
     printf "\r"
     ;;
   "bar")
+    if [[ -z "$__duration" ]]; then
+      print_help
+      exit 1
+    fi
     unset "$__pid"
     progress_bar "$__duration" &
     __pid="$!"
