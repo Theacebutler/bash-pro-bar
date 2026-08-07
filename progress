@@ -30,6 +30,7 @@ EOF
 
 __type=
 __duration=0
+__command=
 # Symbols
 __spinner_symbols=(
   "-"
@@ -81,6 +82,7 @@ function progress_bar() {
 }
 
 function main() {
+  # take in user flags for type duration(for the 'bar' option) and command to run
   while [ $# -gt 0 ]; do
     case "$1" in
     "bar")
@@ -92,6 +94,11 @@ function main() {
     "-d" | "--duration")
       __duration="$2"
       shift
+      ;;
+    "-c" | "--command")
+      shift
+      __command=$*
+      break
       ;;
     "help")
       print_help
@@ -106,12 +113,22 @@ function main() {
   case "$__type" in
   "spinner")
     unset "$__pid"
+    if [[ -z "$__command" ]]; then
+      exit 1
+    fi
     spinner &
     __pid="$!"
+    # run the users command
+    $__command &&
+      kill $__pid 2>/dev/null
+    printf "\r"
   "bar")
     unset "$__pid"
     progress_bar "$__duration" &
     __pid="$!"
+    # run the users command
+    $__command &&
+      kill $__pid 2>/dev/null
     printf "\r"
     ;;
   "bar")
