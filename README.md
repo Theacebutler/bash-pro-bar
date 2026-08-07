@@ -13,7 +13,7 @@ Take a command to run and show an animation while the command is runing.
   Usage: progress [OPTIONS] [FLAGS]
 
   Example:
-    progress bar 4 -c sleep 5
+    progress bar -d 4 -c sleep 5
 
 
  OPTIONS:
