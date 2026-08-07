@@ -110,6 +110,8 @@ function main() {
       ;;
     esac
     shift
+  done
+
   case "$__type" in
   "spinner")
     unset "$__pid"
@@ -119,16 +121,6 @@ function main() {
     spinner &
     __pid="$!"
     trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
-    # run the users command
-    $__command &&
-      kill $__pid 2>/dev/null
-    printf "\r"
-  "bar")
-    unset "$__pid"
-    progress_bar "$__duration" &
-    __pid="$!"
-    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
-    # run the users command
     $__command &&
       kill $__pid 2>/dev/null
     printf "\r"
@@ -145,4 +137,5 @@ function main() {
     ;;
   esac
 }
+
 main "$@"
