@@ -29,7 +29,7 @@ EOF
 }
 
 __type=
-__duration=0
+__duration=
 __command=
 # Symbols
 __spinner_symbols=(
@@ -112,6 +112,10 @@ function main() {
     shift
   done
 
+  if [[ -z "$__duration" ]] || [[ -z "$__command" ]]; then
+    print_help
+    exit 1
+  fi
   case "$__type" in
   "spinner")
     unset "$__pid"
