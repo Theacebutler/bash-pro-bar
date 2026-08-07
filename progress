@@ -28,9 +28,31 @@ Take a command to run and show an animation while the command is runing.
 EOF
 }
 
+__type=
+# Symbols
+__spinner_symbols=(
+  "-"
+  "\\"
+  "|"
+  "-"
+  "|"
+  "/"
+)
+function spinner() {
+  while true; do
+    for s in "${__spinner_symbols[@]}"; do
+      sleep 0.2
+      printf "\r%s" "$s"
+    done
+  done
+}
+
 function main() {
   while [ $# -gt 0 ]; do
     case "$1" in
+    "spinner")
+      __type="spinner"
+      ;;
     "help")
       print_help
       exit 0
@@ -41,24 +63,10 @@ function main() {
       ;;
     esac
     shift
-  done
-
   case "$__type" in
   "spinner")
     unset "$__pid"
-    if [[ -z "$__command" ]]; then
-      exit 1
-    fi
     spinner &
-    __pid="$!"
-    trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
-    # run the users command
-    $__command &&
-      kill $__pid 2>/dev/null
-    printf "\r"
-  "bar")
-    unset "$__pid"
-    progress_bar "$__duration" &
     __pid="$!"
     trap 'kill $__pid 2>/dev/null; echo ' "SIGINT"
     # run the users command
